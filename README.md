@@ -14,7 +14,7 @@ The repository is the architectural foundation for future YouTube chat-controlle
 - [Local Demo Recording](#local-demo-recording)
 - [Authentication (OAuth 2.0 — Key Features)](#authentication-oauth-20--key-features)
 - [Production Run (YouTube Live)](#production-run-youtube-live)
-- [Ubuntu Server Deployment (Headless)](#ubuntu-server-deployment-headless)
+- [Ubuntu Server Deployment (Headless)](docs/ubuntu-server-deployment.md)
 - [Build Checks (Docker via Alpine VM)](#build-checks-docker-via-alpine-vm)
 - [Release Build (Linux Artifact)](#release-build-linux-artifact)
 - [Release Build (Windows .exe)](#release-build-windows-exe)
