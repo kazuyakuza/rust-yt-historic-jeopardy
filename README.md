@@ -14,6 +14,7 @@ The repository is the architectural foundation for future YouTube chat-controlle
 - [Local Demo Recording](#local-demo-recording)
 - [Authentication (OAuth 2.0 — Key Features)](#authentication-oauth-20--key-features)
 - [Production Run (YouTube Live)](#production-run-youtube-live)
+- [Ubuntu Server Deployment (Headless)](#ubuntu-server-deployment-headless)
 - [Build Checks (Docker via Alpine VM)](#build-checks-docker-via-alpine-vm)
 - [Release Build (Linux Artifact)](#release-build-linux-artifact)
 - [Release Build (Windows .exe)](#release-build-windows-exe)
@@ -117,6 +118,9 @@ The `auth` command performs the Google OAuth 2.0 installed-application authoriza
 Full guide (schema, exit codes, failure classes, verification evidence and known limitations): [`docs/authentication.md`](docs/authentication.md). Standing limitation: no live Google authorization was performed during this phase — the flow is validated offline with fakes and loopback HTTP servers only, and native Windows/Linux runtimes were NOT RUN.
 
 ## Production Run (YouTube Live)
+
+For a headless Ubuntu VPS deployment, including desktop authorization and secure transfer of the OAuth client and token files, see [`docs/ubuntu-server-deployment.md`](docs/ubuntu-server-deployment.md).
+
 
 The `run` command is the production streaming mode: it consumes the Phase-04 credential service (load → verify-first → refresh-once → persist → re-verify), creates ONE new broadcast and ONE new live-stream resource from the validated `youtube.broadcast.*` metadata, binds them, waits for readiness (bounded, cancellable), acquires the RTMPS ingestion destination (never logged), and streams continuous rendered frames through the configured external FFmpeg executable over RTMPS. A bounded live-chat worker consumes the created broadcast's Live Chat over the server-streamed connection and feeds incoming ordinary messages into the frame pipeline: they render as author/text when present, and the frames stay black while chat is idle. The operator-facing chat documentation is landed (see the [Live Chat section](docs/production-run.md#live-chat-behavior-diagnostics-recovery-privacy-quota): prerequisites, behavior, diagnostics, recovery, privacy, quota); the real-broadcast manual verification stays operator-run.
 
