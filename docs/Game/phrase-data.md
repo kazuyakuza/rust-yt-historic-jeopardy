@@ -89,6 +89,7 @@ SQLite is the persistent store for:
 - Phrase selection timestamps and within-stream reuse state.
 - Game and stream aggregate metrics.
 - Configuration values that are intended to be persisted.
+- Historical metrics such as player counts, valid-input counts, average game duration, game count, games per stream, players per stream, and other balance/usage aggregates.
 
 Current phrase state during a live round — revealed letters, active hints, countdowns, and current player scores — is transient runtime state and is not required to be persisted as a recoverable game session.
 
