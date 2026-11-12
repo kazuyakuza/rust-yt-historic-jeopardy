@@ -17,7 +17,7 @@ The stream should remain active while waiting for an audience, subject to its co
 
 When the application is waiting for players, the first received chat message establishes audience activity. A configurable short countdown then precedes the next game; an initial example is 2–3 seconds. Messages received when no game is active do not become game guesses, but they still count as audience activity.
 
-During a game, a configurable no-player/no-participation timeout may end the current game and return the application to `WaitingForPlayers`. An initial example discussed for this timeout is five minutes. The exact operational definition of player absence and its timer must be kept distinct from the stream-level viewer fallback: any chat message is audience activity even if it is not a valid game input.
+During a game, a configurable no-participation timeout may end the current game and return the application to `WaitingForPlayers`. No participation means that no valid, scoring game input has been received during the timeout; an initial example discussed for this timeout is five minutes. This timer is distinct from stream-level chat inactivity: any incoming chat message, even an invalid one, counts as audience activity and resets chat inactivity, but it does not count as game participation.
 
 ## Chat-First Audience Detection
 
@@ -29,7 +29,7 @@ Chat messages are the primary audience-presence signal. The application does not
 
 ## Viewer Counter Fallback
 
-The viewer counter is a fallback signal, not a real-time event listener. No official push notification for changes to concurrent viewer count has been identified. Use the YouTube Data API's `concurrentViewers` value when available, and make requests only after chat inactivity has activated the fallback.
+The viewer counter is a fallback signal, not a real-time event listener. No official push notification for changes to concurrent viewer count has been identified. Use the YouTube Data API's `concurrentViewers` value when available, and make requests only after chat inactivity has activated the fallback. See the official [Videos resource documentation](https://developers.google.com/youtube/v3/docs/videos#liveStreamingDetails) for `liveStreamingDetails.concurrentViewers` and the [YouTube push notification guide](https://developers.google.com/youtube/v3/guides/push_notifications) for the supported notification scope.
 
 Initial proposed timing and behavior:
 
