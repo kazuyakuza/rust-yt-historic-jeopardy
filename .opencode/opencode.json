@@ -1,0 +1,58 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "planner",
+  "instructions": [
+    ".kilo/rules/*.md"
+  ],
+  "plugin": [
+    "opencode-ignore@1.1.0"
+  ],
+  "permission": {
+    "edit": {
+      "*": "ask",
+      ".agent/project-info/**": "allow",
+      ".agent/todos/**": "allow",
+      ".agent/project-structure.md": "allow",
+      ".kilo/plans/**": "allow",
+      "tmp/**": "allow",
+      "__tmp__/**": "allow",
+      "docs/**": "allow",
+      "src/**": "allow",
+      "test/**": "allow",
+      "__test__/**": "allow",
+      "tests/**": "allow",
+      "__tests__/**": "allow",
+      "e2e/**": "allow",
+      "__e2e__/**": "allow",
+      "test-results/**": "allow",
+      "*ignore*": "allow",
+      "*LICENSE*": "allow",
+      "*.md": "allow",
+      "package*": "allow",
+      ".env.*": "allow",
+      "*angular*": "allow",
+      "*docker*": "allow",
+      "*Docker*": "allow",
+      "*lint*": "allow",
+      "*config*": "allow"
+    }
+  },
+  "mcp": {
+    "alpine-vm": {
+      "type": "local",
+      "command": [
+        "node",
+        "C:\\repo\\vm-ssh-mcp\\src\\server.mjs"
+      ],
+      "enabled": true,
+      "environment": {
+        "VM_SSH_HOST": "127.0.0.1",
+        "VM_SSH_PORT": "3022",
+        "VM_SSH_USER": "alpine",
+        "VM_SSH_PASSWORD": "alpine",
+        "VM_VBOX_NAME": "alpine-virt-3.21.2-x86_64",
+        "VM_ALLOWED_PREFIXES": "docker,sh,ls,cat,ps,df,free,uname,pwd,whoami"
+      }
+    }
+  }
+}

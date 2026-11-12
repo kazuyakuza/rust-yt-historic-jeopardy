@@ -1,0 +1,57 @@
+//! Application-level frame pipeline: wires chat → renderer → streaming at
+//! the application layer (brief §2.2/§4), the one place where those three
+//! modules meet. Boundary rules: `pipeline` may use `crate::chat`,
+//! `crate::renderer`, `crate::streaming`, `crate::config::model` and `std`;
+//! `streaming` never learns about chat messages or rendering. Pacing is a
+//! single synchronous std thread (no async runtime; brief §3.2), Ctrl+C is a
+//! shared stop flag documented in `interrupt`, and scope authority is TODO
+//! Task 2 in `.agent/todos/20261011/20261011-todo-1-DONE.md` plus plan
+//! `.kilo/plans/20261011-phase03-task2-frame-pipeline.md`. Reachable from
+//! `main` through the `demo` mode (TODO Task 3).
+mod clock;
+mod error;
+mod interrupt;
+mod pacing;
+mod runner;
+mod runner_prepare;
+mod source;
+mod source_error;
+
+pub(crate) use error::FramePipelineError;
+pub(crate) use interrupt::{
+    install_interrupt_handler, install_stop_request_handler, InterruptHandlerError, StopFlag,
+};
+pub(crate) use runner::{PipelineConstruction, StreamParts};
+pub(crate) use runner_prepare::{prepared_pipeline, prepared_stream_pipeline};
+pub(crate) use source::MessageSource;
+pub(crate) use source_error::{ChatRetrievalError, ChatSourceError};
+
+#[cfg(test)]
+pub(crate) use pacing::PipelinePacing;
+#[cfg(test)]
+pub(crate) use runner::{FramePipeline, PipelineParts};
+#[cfg(test)]
+pub(crate) use test_helpers::{
+    FakeClock, RecordingSink, StubRenderer, TEST_FRAME_BYTES, TEST_INTERVAL_NANOS,
+};
+
+#[cfg(test)]
+mod clock_tests;
+#[cfg(test)]
+mod error_tests;
+#[cfg(test)]
+mod interrupt_tests;
+#[cfg(test)]
+mod pacing_tests;
+#[cfg(test)]
+mod runner_tests;
+#[cfg(test)]
+mod source_helpers;
+#[cfg(test)]
+mod test_helpers;
+// AMENDMENT 2 ruling 6: registered at the module root (sibling of
+// `runner.rs`), not from `runner.rs`, to keep `runner.rs` within the
+// 200-line cap; test-organizational only.
+#[cfg(test)]
+#[path = "runner_retrieval_tests.rs"]
+mod runner_retrieval_tests;

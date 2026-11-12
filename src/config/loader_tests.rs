@@ -1,0 +1,138 @@
+//! Loading-pipeline tests: valid load, missing or unreadable files, malformed
+//! JSON, and schema violations, all against temporary files only.
+
+use crate::config::test_fixtures::{
+    example_json, example_json_value, expect_load_error, valid_config, write_temp_config,
+};
+
+use super::*;
+
+#[test]
+fn loads_valid_example_config() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let path = write_temp_config(&dir, &example_json());
+    let loaded = load_from_path(&path).expect("example config must load");
+    assert_eq!(loaded, valid_config());
+}
+
+#[test]
+fn missing_file_reports_io_error() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let path = dir.path().join("config.json");
+    let error = expect_load_error(&path);
+    assert!(matches!(error, ConfigError::Io { .. }));
+    assert!(error.to_string().contains(&path.display().to_string()));
+}
+
+#[test]
+fn unreadable_file_reports_io_error() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let directory_path = dir.path().join("some-dir");
+    std::fs::create_dir(&directory_path).expect("test directory must be created");
+    let error = expect_load_error(&directory_path);
+    assert!(matches!(error, ConfigError::Io { .. }));
+    let message = error.to_string();
+    assert!(message.contains("unable to read configuration file"));
+    assert!(message.contains(&directory_path.display().to_string()));
+}
+
+#[test]
+fn malformed_json_reports_deserialization_error() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let path = write_temp_config(&dir, "{\"youtube\": {");
+    let error = expect_load_error(&path);
+    assert!(matches!(error, ConfigError::Deserialization { .. }));
+    assert!(error.to_string().contains(&path.display().to_string()));
+}
+
+#[test]
+fn missing_required_field_reports_error() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+
+    let mut without_video_section = example_json_value();
+    without_video_section
+        .as_object_mut()
+        .expect("example JSON must be an object")
+        .remove("video");
+    let path_without_video = write_temp_config(&dir, &without_video_section.to_string());
+    let error_without_video = expect_load_error(&path_without_video);
+    assert!(matches!(
+        error_without_video,
+        ConfigError::Deserialization { .. }
+    ));
+    assert!(error_without_video.to_string().contains("missing field"));
+
+    let mut without_bitrate = example_json_value();
+    without_bitrate["ffmpeg"]
+        .as_object_mut()
+        .expect("ffmpeg JSON must be an object")
+        .remove("bitrate");
+    let path_without_bitrate = write_temp_config(&dir, &without_bitrate.to_string());
+    let error_without_bitrate = expect_load_error(&path_without_bitrate);
+    assert!(matches!(
+        error_without_bitrate,
+        ConfigError::Deserialization { .. }
+    ));
+    assert!(error_without_bitrate.to_string().contains("missing field"));
+}
+
+#[test]
+fn unknown_field_rejected() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let mut value = example_json_value();
+    value["renderer"]
+        .as_object_mut()
+        .expect("renderer JSON must be an object")
+        .insert("max_messages".to_string(), serde_json::json!(10));
+    let path = write_temp_config(&dir, &value.to_string());
+    let error = expect_load_error(&path);
+    assert!(matches!(error, ConfigError::Deserialization { .. }));
+}
+
+#[test]
+fn negative_number_rejected() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let mut value = example_json_value();
+    value["video"]["width"] = serde_json::Value::from(-5);
+    let path = write_temp_config(&dir, &value.to_string());
+    let error = expect_load_error(&path);
+    assert!(matches!(error, ConfigError::Deserialization { .. }));
+}
+
+#[test]
+fn example_mirrors_oauth_schema() {
+    let example_path = std::path::Path::new("config/config.example.json");
+    let loaded = load_from_path(example_path).expect("committed example config must load");
+    assert_eq!(
+        loaded.oauth.client_config_path,
+        "credentials/client_secret.json"
+    );
+    assert_eq!(loaded.oauth.credentials_path, "credentials/tokens.json");
+}
+
+#[test]
+fn unknown_oauth_field_rejected() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let mut value = example_json_value();
+    value["oauth"]
+        .as_object_mut()
+        .expect("oauth JSON must be an object")
+        .insert("bogus".to_string(), serde_json::json!(true));
+    let path = write_temp_config(&dir, &value.to_string());
+    let error = expect_load_error(&path);
+    assert!(matches!(error, ConfigError::Deserialization { .. }));
+}
+
+#[test]
+fn oauth_section_missing_rejected() {
+    let dir = tempfile::tempdir().expect("temp dir must be created");
+    let mut value = example_json_value();
+    value
+        .as_object_mut()
+        .expect("example JSON must be an object")
+        .remove("oauth");
+    let path = write_temp_config(&dir, &value.to_string());
+    let error = expect_load_error(&path);
+    assert!(matches!(error, ConfigError::Deserialization { .. }));
+    assert!(error.to_string().contains("missing field"));
+}

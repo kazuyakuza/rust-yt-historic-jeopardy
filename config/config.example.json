@@ -1,0 +1,52 @@
+{
+  "youtube": {
+    "broadcast": {
+      "title": "Rust YouTube Streamer Prototype",
+      "description": "YouTube Live streaming prototype",
+      "privacy_status": "unlisted",
+      "made_for_kids": false
+    }
+  },
+  "oauth": {
+    "client_config_path": "credentials/client_secret.json",
+    "credentials_path": "credentials/tokens.json"
+  },
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "pixel_format": "rgb24"
+  },
+  "renderer": {
+    "font": "fonts/console.ttf",
+    "font_size": 32,
+    "line_height": 40,
+    "left_margin": 20,
+    "top_margin": 20,
+    "right_margin": 20,
+    "bottom_margin": 20,
+    "text_color": "#FFFFFF",
+    "background_color": "#000000"
+  },
+  "chat": {
+    "log_file": "logs/chat.log"
+  },
+  "ffmpeg": {
+    "executable": "ffmpeg",
+    "video_codec": "libx264",
+    "preset": "veryfast",
+    "bitrate": "6000k",
+    "audio": {
+      "enabled": true
+    }
+  },
+  "diagnostics": {
+    "pipeline_timing_events": false,
+    "queue_metrics": false,
+    "periodic_summary": false,
+    "summary_interval_seconds": 30,
+    "output_file": "logs/diagnostics.log",
+    "max_file_bytes": 1048576,
+    "max_generations": 3
+  }
+}
