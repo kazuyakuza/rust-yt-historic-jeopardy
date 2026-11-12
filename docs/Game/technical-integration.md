@@ -46,7 +46,7 @@ SQLite stores durable game content and historical information. At minimum, the p
 
 Current-round state is transient: revealed letters, visible hints, countdowns, active phrase crossings, current points, input queue, and per-input scoring breakdown. The per-input breakdown should be available to tests and diagnostics while processing, but it does not need to be persisted after the game.
 
-At stream start, initialize a new stream scope: clear stream victory totals and make every phrase available. Historical aggregates remain intact.
+At stream start, initialize a new stream scope: clear stream victory totals and make every phrase available. Historical aggregates remain intact. Track, where applicable, player counts, valid-input counts, average game duration, total game count, average games per stream, players per stream, and other balance/usage metrics.
 
 ## Configuration
 
