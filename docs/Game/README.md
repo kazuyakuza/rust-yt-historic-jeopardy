@@ -12,6 +12,7 @@ The repository's existing root-level documentation describes the reusable YouTub
 - [Scoring and Leaderboards](scoring-and-leaderboards.md) — point calculation, bonuses, player identity, and stream standings.
 - [Stream Lifecycle and Audience](stream-lifecycle.md) — stream states, intermissions, audience detection, viewer fallback, and shutdown.
 - [Technical Integration](technical-integration.md) — Core reuse, module boundaries, persistence responsibilities, testing, and operational constraints.
+- [Decisions to Finalize](decisions-to-finalize.md) — settled rules versus numeric values and algorithms to lock before implementation.
 
 ## Source of Truth
 
