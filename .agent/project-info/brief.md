@@ -235,6 +235,7 @@ The detailed requirements and behavior are organized as follows:
 - [`docs/Game/scoring-and-leaderboards.md`](../../docs/Game/scoring-and-leaderboards.md) — point rules, bonuses, player identity, and rankings.
 - [`docs/Game/stream-lifecycle.md`](../../docs/Game/stream-lifecycle.md) — lifecycle states, audience detection, viewer fallback, stream duration, and shutdown.
 - [`docs/Game/technical-integration.md`](../../docs/Game/technical-integration.md) — Core reuse, persistence, configuration, testing, and technical boundaries.
+- [`docs/Game/decisions-to-finalize.md`](../../docs/Game/decisions-to-finalize.md) — settled requirements and remaining values/algorithms to finalize before implementation.
 
 ## 14. Important Note for AI Agents
 
