@@ -95,9 +95,16 @@ The currently observed YouTube chat-to-viewer delay is approximately 30–35 sec
 
 The configurable display-to-logic delay is a deliberately simple mitigation for countdown visibility. It does not make YouTube Live a synchronized real-time transport. The stream description and viewer instructions should explain that messages and displayed results may be delayed.
 
-## Import Workflow Is Not Yet Locked
+## Phrase Collection and Import Workflow
 
-The preferred direction is to prepare and validate phrase records using Rust code that is also used by the game, potentially through a dedicated CLI import/prepare mode. An external research/extraction step may produce structured input such as JSON. The exact tooling, input format, CLI contract, and update semantics remain open for the implementation phase.
+Phrase acquisition and SQLite import are separate development tools with a JSON interchange contract:
+
+- A standalone JavaScript subproject running on Node.js collects phrase candidates from the documented sources, extracts source attribution and available context, researches or authors missing context, prepares exactly three hints per phrase, and writes structured JSON files.
+- The Node.js collector lives inside the repository but outside the Rust game's `src/` tree. It is not part of the live game runtime and does not write directly to SQLite.
+- A dedicated Rust executable mode or CLI command consumes the JSON files, validates their structure and content, applies or verifies canonical phrase normalization, calculates derived fields such as individual difficulty, and imports valid records through the Rust persistence layer.
+- The JSON interchange contract must be versioned and documented so the collector and importer can evolve independently without silently breaking compatibility.
+
+The collector's source-specific extraction approach, enrichment method, JSON schema details, and duplicate/update semantics are implementation decisions to resolve in the corresponding phases. The collector and importer phases are listed in the [Game Development Roadmap](development-roadmap.md).
 
 ## Implementation Constraint
 
