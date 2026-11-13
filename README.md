@@ -6,7 +6,7 @@ The project combines an existing, working YouTube streaming Core with a separate
 
 ## Project Status
 
-<badge color="success">Core implemented</badge> <badge color="info">Game design and roadmap defined</badge>
+**Core implemented** · **Game design and roadmap defined**
 
 - **Streaming Core:** The reusable Rust foundation is implemented, including OAuth authentication, local demo recording, YouTube Live broadcast operation, Live Chat integration through the official server-streaming API, rendering, and FFmpeg delivery.
 - **Game definition:** The first game's concept, gameplay rules, phrase data requirements, scoring, leaderboards, and stream lifecycle have been documented.
