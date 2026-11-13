@@ -11,7 +11,7 @@ Source attribution and any available source context must be retained for each ph
 
 ## Preparation Before Gameplay
 
-Every phrase must be fully prepared before it becomes eligible for selection. The active game engine must not research, normalize, transliterate, or generate hints while a game is running.
+Every phrase must be fully prepared before it becomes eligible for selection. The active game engine must not research, normalize, or generate hints while a game is running.
 
 Preparation includes:
 
@@ -93,8 +93,16 @@ SQLite is the persistent store for:
 
 Current phrase state during a live round — revealed letters, active hints, countdowns, and current player scores — is transient runtime state and is not required to be persisted as a recoverable game session.
 
-## Import Tooling
+## Collection and Import Workflow
 
-Phrase collection and phrase preparation are separate concerns. External research or extraction may produce structured input for a Rust preparation/import command. A dedicated CLI mode such as `import` or `prepare` is a preferred candidate because it can reuse the game's normalization, validation, difficulty, and database logic.
+Phrase collection and SQLite import are separate tools with a defined JSON interchange boundary:
 
-The exact ingestion format, extraction tool, command shape, duplicate policy, and update semantics are not yet fixed. They should be evaluated and specified in the implementation phase. Regardless of the chosen transport format, only validated, fully prepared records may enter the playable SQLite dataset.
+1. A standalone JavaScript subproject running on Node.js collects phrase candidates from the sources listed above, extracts source attribution and available context, and performs the required research/enrichment to prepare explanatory context and exactly three hints.
+2. The collector writes structured JSON files. The JSON contract must be versioned and documented, and the output must contain enough information for the Rust importer to validate each phrase record.
+3. A dedicated Rust executable mode or CLI command reads those JSON files, validates the records, applies or verifies canonical normalization, calculates derived attributes such as individual difficulty, and imports valid records into SQLite.
+
+The Node.js collector must live in a dedicated subproject inside the repository but outside the game's Rust `src/` tree. It is a development/data-preparation tool and is not part of the live game runtime.
+
+The Rust importer reuses the game's Rust domain, normalization, validation, difficulty, and persistence code wherever appropriate. The collector must not write directly to the SQLite database.
+
+The extraction strategy, JSON schema details, duplicate/update policy, source-specific parsing behavior, and enrichment mechanism are to be finalized in the corresponding implementation phases. Only validated, fully prepared records may enter the playable SQLite dataset.
